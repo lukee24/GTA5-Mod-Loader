@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup><BaseIntermediateOutputPath>obj-net48/</BaseIntermediateOutputPath><MSBuildProjectExtensionsPath>obj-net48/</MSBuildProjectExtensionsPath></PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net48</TargetFramework><LangVersion>latest</LangVersion><Nullable>enable</Nullable><PlatformTarget>x64</PlatformTarget><EnableDefaultCompileItems>false</EnableDefaultCompileItems><OutputPath>bin-net48/</OutputPath></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Net48Program.cs" />
+    <Compile Include="../../WeaponCatalog.cs" Link="WeaponCatalog.cs" />
+    <Compile Include="../../WeaponGameIdentity.cs" Link="WeaponGameIdentity.cs" />
+    <Reference Include="ScriptHookVDotNet3"><HintPath>../../third_party/shvdne/package/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

@@ -1,0 +1,1 @@
+import {scan} from '../packages/scanner';import path from 'node:path';const root=process.argv[2];const report=await scan(path.join(root,'mod.zip'),path.join(root,'data'));console.log(JSON.stringify({files:report.files.length,readme:report.readme.length}));

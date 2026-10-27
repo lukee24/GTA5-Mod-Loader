@@ -1,0 +1,29 @@
+.weapon-catalog{min-width:0;margin-bottom:20px;padding:22px}
+.weapon-catalog>.panel-heading{padding:0 0 16px;margin-bottom:16px;gap:12px;align-items:flex-start}
+.weapon-catalog h3{display:flex;gap:8px;align-items:center}
+.weapon-catalog .panel-heading p,.weapon-catalog .panel-note{font-size:12px;line-height:1.8;color:var(--secondary);margin:8px 0;padding:0;overflow-wrap:anywhere}
+.weapon-catalog-toolbar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.weapon-catalog-toolbar label{display:grid;gap:7px;min-width:0;flex:1 1 280px;font-size:12px;color:var(--secondary)}
+.weapon-catalog-toolbar select{width:100%;min-width:0;max-width:100%}
+.weapon-catalog .notice{margin:14px 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.weapon-source-status{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:20px 0 10px;font-size:12px}
+.weapon-source-status strong{overflow-wrap:anywhere}
+.weapon-issues{font-size:12px;line-height:1.8;padding-left:20px;overflow-wrap:anywhere}
+.weapon-reference-search{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+.weapon-reference-search .search{min-width:0;flex:1 1 250px}
+.weapon-reference-search input{min-width:0;width:100%}
+.weapon-reference-list{display:grid;gap:12px}
+.weapon-reference{min-width:0;padding:16px;border:1px solid var(--line);border-radius:12px}
+.weapon-reference-heading{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.weapon-reference strong,.weapon-reference code,.weapon-reference dd,.weapon-reference li{overflow-wrap:anywhere;word-break:break-word}
+.weapon-reference code{font-size:11px;color:var(--secondary)}
+.weapon-reference dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;font-size:12px;margin:16px 0}
+.weapon-reference dt{color:var(--secondary);margin-bottom:5px}
+.weapon-reference dd{margin:0}
+.weapon-reference details{font-size:12px;line-height:1.8}
+.weapon-reference summary{cursor:pointer;color:var(--accent);padding:4px 0}
+.weapon-source-evidence{display:grid;gap:4px;margin:12px 0}
+.weapon-source-evidence p{margin:0;overflow-wrap:anywhere}
+.weapon-source-evidence small{color:var(--secondary)}
+.weapon-pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:16px;font-size:12px}
+@media(max-width:1100px){.weapon-catalog{padding:18px}.weapon-reference dl{grid-template-columns:minmax(0,1fr)}.weapon-catalog>.panel-heading{flex-wrap:wrap}.weapon-catalog-toolbar label{flex-basis:100%}}

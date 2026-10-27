@@ -1,0 +1,42 @@
+Read-only fixed SDK audit, 2026-10-27
+
+Package: ScriptHookVDotNetEnhanced v1.1.0.6
+release.zip SHA-256: f10da8819fa6814fb0a04553567d2516934eac96b16af06ad8f315f0da00473a
+package/ScriptHookVDotNet3.dll SHA-256: 1e4d0bc4d34d05a6038fc87eede492d3dc4265522de473ec19cdf6746b5b0e48
+
+Source evidence was read from release.zip -> Docs/ScriptHookVDotNet3.xml,
+then actual DLL public method reflection, selected method-body call/field
+instructions, and direct invocation of the managed hash helper.
+
+Public signature:
+  uint GTA.StringHash.AtStringHashUtf8(string input, uint initValue)
+Used initValue: 0
+
+XML says input is converted to UTF-8 bytes. ASCII uppercase letters are mapped
+to lowercase; backslashes to slashes; a leading quoted value receives special
+substring treatment. Our accepted weapon-name domain is [A-Za-z][A-Za-z0-9_]{0,63},
+so quote/slash and non-ASCII behavior is outside the accepted domain.
+
+Selected actual IL call/field graph:
+  AtStringHashUtf8 -> AtPartialStringHashUtf8 -> String.IsNullOrEmpty,
+    Encoding.UTF8, Encoding.GetBytes, AtPartialStringHash(byte[], uint).
+  AtPartialStringHash(byte[], uint) -> AtPartialStringHashForDoubleQuotedString
+    only for quoted input; reads s_normalizeCaseAndSlashLookup.
+  AtStringHashUtf8 -> AtFinalizeHash(uint), with no calls/field access there.
+  StringHash static constructor -> byte[] allocation, RuntimeHelpers.InitializeArray,
+    s_normalizeCaseAndSlashLookup assignment.
+No Native.Function, game handle, NativeMemory or process-memory path occurs on
+the accepted ASCII-token call path. This is managed metadata hashing, not a
+game invocation or proof that a weapon is registered.
+
+Actual fixed-DLL vectors (hex uint32, lowercase, eight digits):
+  WEAPON_PISTOL       1b06d571
+  WEAPON_UNARMED      a2719263
+  WEAPON_ASSAULTRIFLE bfefff6d
+  WEAPON_GEMS_TEST    2c9384c6
+  weapon_gems_test    2c9384c6
+  WEAPON_A           09c3167e
+  WEAPON_Z9          152868df
+
+Program.cs reruns these vectors using the actual fixed DLL and also checks
+WeaponHash.Pistol / WeaponHash.Unarmed enum values. No game process is called.

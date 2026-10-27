@@ -1,0 +1,71 @@
+name: GEMS source verification
+
+on:
+  push:
+    paths:
+      - 'gems/**'
+      - '.github/workflows/gems-windows.yml'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+      - 'LICENSE'
+  pull_request:
+    paths:
+      - 'gems/**'
+      - '.github/workflows/gems-windows.yml'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+      - 'LICENSE'
+  workflow_dispatch:
+    inputs:
+      desktop_smoke_test:
+        description: 'Run the Electron desktop smoke test with temporary fixtures'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: gems
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: gems/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run core and filesystem tests
+        run: npm test
+      - name: Type-check and build desktop source
+        run: npm run build
+      - name: Install Electron for optional desktop test
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.desktop_smoke_test }}
+        run: |
+          Remove-Item Env:ELECTRON_SKIP_BINARY_DOWNLOAD
+          node node_modules/electron/install.js
+      - name: Optional desktop smoke test
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.desktop_smoke_test }}
+        run: npm run test:ui
+      - name: Create source archive
+        run: npm run source
+      - name: Verify source archive contents and hashes
+        run: node scripts/verify-source.mjs
+      - name: Upload source and verification record
+        uses: actions/upload-artifact@v4
+        with:
+          name: GEMS-source-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            gems/release/GEMS-*-source.zip
+            gems/release/GEMS-*-source-verification.json

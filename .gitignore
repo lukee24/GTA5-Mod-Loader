@@ -1,0 +1,23 @@
+# Only this curated tree is the public repository.
+**/node_modules/
+**/dist/
+**/release/
+**/artifacts/
+**/bin/
+**/obj/
+.oss-private/
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+*.sqlite
+*.db
+*.log
+gems/native/game-assistant/third_party/shvdne/release.zip
+gems/native/game-assistant/third_party/shvdne/package/*.dll
+gems/native/game-assistant/third_party/shvdne/package/*.asi
+gems/native/game-assistant/third_party/shvdne/package/*.pdb
+gems/native/game-assistant/third_party/shvdne/package/*.xml
+gems/native/game-assistant/third_party/shvdne/package/*.ini

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0-windows</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><EnableDefaultCompileItems>false</EnableDefaultCompileItems><ProdRoot>../..</ProdRoot></PropertyGroup>
+ <ItemGroup>
+  <Compile Include="Program.cs" />
+  <Compile Include="$(ProdRoot)/PedContracts.cs" Link="production/PedContracts.cs" />
+  <Compile Include="$(ProdRoot)/PedController.cs" Link="production/PedController.cs" />
+  <Compile Include="$(ProdRoot)/SpawnQuota.cs" Link="production/SpawnQuota.cs" />
+  <Compile Include="$(ProdRoot)/OwnedBooleanState.cs" Link="production/OwnedBooleanState.cs" />
+  <Compile Include="$(ProdRoot)/WorldContracts.cs" Link="production/WorldContracts.cs" />
+  <Compile Include="$(ProdRoot)/WeaponContracts.cs" Link="production/WeaponContracts.cs" />
+  <Compile Include="$(ProdRoot)/WeaponActionContracts.cs" Link="production/WeaponActionContracts.cs" />
+  <Compile Include="$(ProdRoot)/WeaponJournal.cs" Link="production/WeaponJournal.cs" />
+  <Compile Include="$(ProdRoot)/WeaponCatalog.cs" Link="production/WeaponCatalog.cs" />
+  <Compile Include="$(ProdRoot)/WeaponGameIdentity.cs" Link="production/WeaponGameIdentity.cs" />
+  <Reference Include="ScriptHookVDotNet3"><HintPath>$(ProdRoot)/third_party/shvdne/package/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>
+ </ItemGroup>
+</Project>

@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import dns from 'node:dns/promises';
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import https from 'node:https';
+import {getEventListeners} from 'node:events';
+import {awaitAbort} from '../packages/core/await-abort';
+import {trustedResponse} from '../packages/marketplace/network';
+import {Store} from '../packages/database';
+import {Downloads} from '../packages/marketplace/downloads';
+const url='https://github.com/author/mod/releases/download/v1/test.zip';
+async function stalled(t:any){const original=dns.lookup;let resolve!:(value:any)=>void,reject!:(value:any)=>void,started!:()=>void;const entered=new Promise<void>(r=>started=r);dns.lookup=(()=>{started();return new Promise((a,b)=>{resolve=a;reject=b;});}) as unknown as typeof dns.lookup;t.after(()=>{dns.lookup=original;resolve?.([{address:'140.82.112.3',family:4}]);});return{entered,resolve:()=>resolve([{address:'140.82.112.3',family:4}]),reject:()=>reject(new Error('DNS late failure'))};}
+test('DNS 无响应时用户取消不能等到系统解析完成',async t=>{const dnsState=await stalled(t),controller=new AbortController();const pending=trustedResponse(url,controller.signal);await dnsState.entered;let released=false;const release=setTimeout(()=>{released=true;dnsState.resolve();},1000);try{controller.abort();await assert.rejects(pending);assert.equal(released,false,'取消仍等待系统 DNS 返回');}finally{clearTimeout(release);dnsState.resolve();}});
+test('下载服务退出在 DNS 无响应时仍能收尾并保留取消状态',async t=>{const root=fs.mkdtempSync(path.join(os.tmpdir(),'gems-dns-close-')),store=await Store.open(root,path.resolve('node_modules/sql.js/dist/sql-wasm.wasm')),queue=new Downloads(store,root),dnsState=await stalled(t);t.after(async()=>{dnsState.resolve();await queue.close();store.close();assert.equal(path.dirname(path.resolve(root)),path.resolve(os.tmpdir()));assert.ok(path.basename(root).startsWith('gems-dns-close-'));fs.rmSync(root,{recursive:true});});queue.add({name:'test.zip',pageUrl:'https://github.com/author/mod/releases/v1',downloadUrl:url,size:0,digest:null});await dnsState.entered;let released=false;const release=setTimeout(()=>{released=true;dnsState.resolve();},1000);try{await queue.close();assert.equal(released,false,'退出仍被系统 DNS 阻塞');assert.equal(queue.list()[0].status,'已取消');assert.equal(store.list('import').length,0);}finally{clearTimeout(release);dnsState.resolve();}});
+
+test('已取消请求不启动 DNS，也不连接网站',async t=>{const original=dns.lookup;let lookups=0;dns.lookup=(()=>{lookups++;return Promise.resolve([{address:'140.82.112.3',family:4}]);}) as unknown as typeof dns.lookup;t.after(()=>dns.lookup=original);const controller=new AbortController();controller.abort();await assert.rejects(trustedResponse(url,controller.signal));assert.equal(lookups,0);});
+test('DNS 等待服从调用方总时限',async t=>{const dnsState=await stalled(t),pending=trustedResponse(url,AbortSignal.timeout(20));let released=false;const release=setTimeout(()=>{released=true;dnsState.resolve();},1000);try{await assert.rejects(pending);assert.equal(released,false);}finally{clearTimeout(release);dnsState.resolve();}});
+test('取消后晚到 DNS 失败不会启动 HTTPS 回查，也没有未处理拒绝',async t=>{const dnsState=await stalled(t),original=https.get;let requests=0;https.get=(()=>{requests++;throw new Error('不应连接');}) as typeof https.get;t.after(()=>https.get=original);const controller=new AbortController(),pending=trustedResponse(url,controller.signal);await dnsState.entered;controller.abort();await assert.rejects(pending);dnsState.reject();await new Promise(r=>setTimeout(r,10));assert.equal(requests,0);});
+test('正常完成或拒绝都清理取消监听，预取消不启动底层操作',async()=>{const controller=new AbortController();assert.equal(await awaitAbort(()=>Promise.resolve('actual result'),controller.signal),'actual result');assert.equal(getEventListeners(controller.signal,'abort').length,0);await assert.rejects(awaitAbort(()=>Promise.reject(new Error('actual failure')),controller.signal),/actual failure/);assert.equal(getEventListeners(controller.signal,'abort').length,0);controller.abort();let started=false;assert.throws(()=>awaitAbort(()=>{started=true;return Promise.resolve('x');},controller.signal));assert.equal(started,false);});

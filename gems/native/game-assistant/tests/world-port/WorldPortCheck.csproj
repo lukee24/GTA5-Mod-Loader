@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+  <ItemGroup><Compile Include="../../GtaWorldPort.cs" Link="GtaWorldPort.cs" /><Compile Include="../../WorldContracts.cs" Link="WorldContracts.cs" /><Compile Include="../../OwnedBooleanState.cs" Link="OwnedBooleanState.cs" /><Compile Include="../../WorldController.cs" Link="WorldController.cs" /></ItemGroup>
+<ItemGroup><Compile Include="../../SpawnQuota.cs" Link="SpawnQuota.cs" /></ItemGroup></Project>

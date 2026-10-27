@@ -1,0 +1,4 @@
+import fs from 'node:fs';import path from 'node:path';import os from 'node:os';import {Store} from '../packages/database';
+const root=path.resolve(process.argv[2]||'');if(path.dirname(root)!==path.resolve(os.tmpdir())||!path.basename(root).startsWith('gems-desktop-log-ui-'))throw new Error('桌面日志测试范围无效');
+const store=await Store.open(path.join(root,'data'),path.resolve('node_modules/sql.js/dist/sql-wasm.wasm'));store.put('settings','main',{gamePath:'',theme:'dark',accent:'#4B8BFF',scale:1,collapsed:false,reduceMotion:true});store.close();fs.writeFileSync(path.join(root,'private.txt'),'不得被操作日志改写');fs.linkSync(path.join(root,'private.txt'),path.join(root,'data/operations.jsonl'));
+for(const name of ['source-a','source-b','source-c']){fs.mkdirSync(path.join(root,name,'mods'),{recursive:true});fs.writeFileSync(path.join(root,name,'mods/config.ini'),name+' 隔离扫描文件');}fs.writeFileSync(path.join(root,'invalid.zip'),'这不是有效压缩包');

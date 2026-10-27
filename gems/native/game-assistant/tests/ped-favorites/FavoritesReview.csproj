@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0-windows</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><EnableDefaultCompileItems>false</EnableDefaultCompileItems><ProdRoot>../..</ProdRoot></PropertyGroup>
+ <ItemGroup><Compile Include="Program.cs" />
+  <Compile Include="$(ProdRoot)/PedFavoriteStore.cs" Link="production/PedFavoriteStore.cs" /><Compile Include="$(ProdRoot)/PedContracts.cs" Link="production/PedContracts.cs" /><Compile Include="$(ProdRoot)/OwnedBooleanState.cs" Link="production/OwnedBooleanState.cs" /><Compile Include="$(ProdRoot)/WorldContracts.cs" Link="production/WorldContracts.cs" /><Compile Include="$(ProdRoot)/BridgeCatalog.cs" Link="production/BridgeCatalog.cs" /><Compile Include="$(ProdRoot)/WeaponGameIdentity.cs" Link="production/WeaponGameIdentity.cs" /><Compile Include="$(ProdRoot)/WeaponCatalog.cs" Link="production/WeaponCatalog.cs" />
+  <Reference Include="ScriptHookVDotNet3"><HintPath>$(ProdRoot)/third_party/shvdne/package/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>
+ </ItemGroup>
+</Project>

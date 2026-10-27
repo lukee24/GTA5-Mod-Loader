@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0-windows</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+ <ItemGroup>
+ <Compile Include="../../WeaponContracts.cs" Link="WeaponContracts.cs" /><Compile Include="../../WeaponController.cs" Link="WeaponController.cs" /><Compile Include="../../WeaponJournal.cs" Link="WeaponJournal.cs" />
+ <Compile Include="../../WeaponCatalog.cs" Link="WeaponCatalog.cs" /><Compile Include="../../WeaponGameIdentity.cs" Link="WeaponGameIdentity.cs" /><Compile Include="../../WeaponCatalogBridge.cs" Link="WeaponCatalogBridge.cs" />
+ <Compile Include="../../OwnedBooleanState.cs" Link="OwnedBooleanState.cs" />
+ <Compile Include="../../WeaponMenu.cs" Link="WeaponMenu.cs" /><Compile Include="../../MenuState.cs" Link="MenuState.cs" />
+ <Reference Include="ScriptHookVDotNet3"><HintPath>../../third_party/shvdne/package/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>
+ </ItemGroup>
+<ItemGroup><Compile Include="../../WeaponActionContracts.cs" Link="WeaponActionContracts.cs" /><Compile Include="../../WeaponActionsController.cs" Link="WeaponActionsController.cs" /><Compile Include="../../WeaponActionsMenu.cs" Link="WeaponActionsMenu.cs" /></ItemGroup></Project>
