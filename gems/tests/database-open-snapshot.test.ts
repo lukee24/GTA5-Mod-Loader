@@ -17,15 +17,15 @@ test('数据库读取后同长度原地改写必须拒绝，而非返回旧快�
 });
 test('数据库同长度改写即使时间戳不变也必须按真实字节拒绝',async()=>{
  const f=await fixture(),read=fs.readSync,open=fs.openSync,fstat=fs.fstatSync,lstat=fs.lstatSync;
- const stamp=fs.statSync(f.file,{bigint:true});let target:number|undefined,changed=false;
+ const stamp=fs.statSync(f.file,{bigint:true}),lstatDescriptor=Object.getOwnPropertyDescriptor(fs,'lstatSync')!;let target:number|undefined,changed=false;
  try{
   fs.openSync=((file,...args)=>{const fd=(open as any)(file,...args);if(path.resolve(String(file))===f.file&&args[0]==='r')target=fd;return fd;}) as typeof fs.openSync;
   fs.fstatSync=((fd,...args)=>{const stat=(fstat as any)(fd,...args);if(fd===target){stat.mtimeNs=stamp.mtimeNs;stat.ctimeNs=stamp.ctimeNs;}return stat;}) as typeof fs.fstatSync;
-  fs.lstatSync=((file,...args)=>{const stat=(lstat as any)(file,...args);if(path.resolve(String(file))===f.file){stat.mtimeNs=stamp.mtimeNs;stat.ctimeNs=stamp.ctimeNs;}return stat;}) as typeof fs.lstatSync;
+  Object.defineProperty(fs,'lstatSync',{...lstatDescriptor,value:((file,...args)=>{const stat=(lstat as any)(file,...args);if(path.resolve(String(file))===f.file){stat.mtimeNs=stamp.mtimeNs;stat.ctimeNs=stamp.ctimeNs;}return stat;}) as typeof fs.lstatSync});
   fs.readSync=((fd,buffer,...args)=>{const count=(read as any)(fd,buffer,...args);if(fd===target&&!changed&&buffer.byteLength===f.baseline.length&&count>0){changed=true;fs.writeFileSync(f.file,f.external);}return count;}) as typeof fs.readSync;
   assert.throws(()=>readDatabase(f.file),/数据库.*变化/);
   assert.equal(changed,true);assert.deepEqual(fs.readFileSync(f.file),f.external);
- }finally{fs.readSync=read;fs.openSync=open;fs.fstatSync=fstat;fs.lstatSync=lstat;f.cleanup();}
+ }finally{fs.readSync=read;fs.openSync=open;fs.fstatSync=fstat;Object.defineProperty(fs,'lstatSync',lstatDescriptor);f.cleanup();}
 });
 test('数据库读取后路径替换即使大小相同也拒绝，旧新文件保留',async()=>{
  const f=await fixture(),read=fs.readSync,moved=f.file+'.old';let changed=false;
